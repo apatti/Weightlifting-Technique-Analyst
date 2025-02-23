@@ -23,6 +23,7 @@ if f is not None:
     with(st.spinner('Analyzing your video...')):
         analysis_results = wla.analyze_weightLifting_video(tfile.name, 1,stframe)
 
+    with(st.spinner('Consulting experts...')):
         coaching = Coach()
         response : Union[RunResponse, Iterable[RunResponse]] = coaching.run(pose_estimate_data=analysis_results,st=st)
         for resp in response:
