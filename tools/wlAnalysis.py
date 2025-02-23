@@ -6,7 +6,8 @@ import time
 import math
 import json
 
-def analyze_weightLifting_video( video_path: str,slow_factor) -> None:
+
+def analyze_weightLifting_video( video_path: str,slow_factor, st) -> None:
     """
     Analyzes an Olympic weightlifting video for pose and provides basic analysis.
 
@@ -17,6 +18,8 @@ def analyze_weightLifting_video( video_path: str,slow_factor) -> None:
     Returns:
         None. Displays the video with the pose landmarks and print analysis
     """
+    #object_detection_model = load_object_detection_model()
+
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
     mp_drawing = mp.solutions.drawing_utils
@@ -40,6 +43,7 @@ def analyze_weightLifting_video( video_path: str,slow_factor) -> None:
     frame_count = 0
     analysis_results = []
     knee_angle_data = {"left": [], "right": []} #store knee angle data
+    detection_status = {"first_phase": False, "extension": False, "transition": False, "catch": False}
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
@@ -59,6 +63,17 @@ def analyze_weightLifting_video( video_path: str,slow_factor) -> None:
             time_data.append(time.time())
             knee_angle_data["left"].append(analysis.get("left_knee_angle", None))
             knee_angle_data["right"].append(analysis.get("right_knee_angle", None))
+            
+            if analysis.get("lift_phase") == "First Phase" and not detection_status["first_phase"]:
+                detection_status["first_phase"] = True
+            
+            if analysis.get("lift_phase") == "Extension/Catch" and not detection_status["extension"]:
+                detection_status["extension"] = True
+                analysis["lift_phase"] = "Extension"
+            
+            if not detection_status["first_phase"]:
+                analysis["lift_phase"] = "Setup"
+
             analysis_results.append({
                 "frame": frame_count,
                 "phase": analysis.get("lift_phase"),
@@ -68,24 +83,35 @@ def analyze_weightLifting_video( video_path: str,slow_factor) -> None:
                 "right_knee_angle": analysis.get("right_knee_angle")
             })
             #print(f"Frame {frame_count}:", analysis) #print analysis for each frame.
+            #detect_barbell(frame,object_detection_model)
+            #detect_circle(frame)
             cv2.putText(frame, f"{analysis.get("lift_phase")}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
             previous_hip_y = hip_y
             previous_shoulder_y = shoulder_y
             previous_wrist_y = wrist_y
 
         frame_count += 1
-        cv2.imshow('Weightlifting Analysis', frame)
+        #22.371817 250.71399   34.990044 261.4342
+        #left, right, top, bottom = int(22.371817 * frame_width), int(250.71399 * frame_width), int(34.990044 * frame_height), int(261.4342 * frame_height)
 
-        if cv2.waitKey(int(1000 / 30 * slow_factor)) & 0xFF == ord('q'): # Slowed playback
-            break
+        #cv2.rectangle(frame, (int(22.371817* frame_width), int(34.990044* frame_width)), (int(250.71399*frame_height), int(261.4342*frame_height)), (0, 255, 0), 2)
+        if st:
+            stFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            st.image(stFrame)
+        else:
+            cv2.imshow('Weightlifting Analysis', frame)
+            if cv2.waitKey(int(1000 / 30 * slow_factor)) & 0xFF == ord('q'): # Slowed playback
+                break
         
         frame_count += 1
     
     cap.release()
     cv2.destroyAllWindows()
 
-    plot_knee_angles(time_data, knee_angle_data)
-    print(f"Analysis Results:{json.dumps(analysis_results)}")
+    if not st:
+        plot_knee_angles(time_data, knee_angle_data)
+    #print(f"Analysis Results:{json.dumps(analysis_results)}")
+    return analysis_results
 
 def calculate_angle(a, b, c):
     a = np.array(a)  # First  
@@ -183,5 +209,5 @@ def plot_knee_angles(time_data, knee_angle_data):
     plt.show()
 
 if __name__ == "__main__":
-    path = input("Enter the path to the video file: ")
-    analyze_weightLifting_video(path,slow_factor=1)
+    #path = input("Enter the path to the video file: ")
+    analyze_weightLifting_video("clean.mp4",slow_factor=2)
