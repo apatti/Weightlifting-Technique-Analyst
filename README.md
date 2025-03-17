@@ -72,6 +72,7 @@ The Weightlifting Technique Analyst (WTA) is a multi-agent application designed 
 
 ## Future Enhancements
 
-1. Leverages RAGAS for evaluation.
-2. Fine-tune an embedding model for enhanced accuracy.
-3. Bar-bell detection to enhance pose analysis.
+1. PDF generated report.
+2. Train on any coaches available youtube videos and provide feedback based on it.
+3. Convert the project into a coaching platform.
+
