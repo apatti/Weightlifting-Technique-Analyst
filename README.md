@@ -8,7 +8,9 @@ The Weightlifting Technique Analyst (WTA) is a multi-agent application designed 
 
 * **Video Analysis:**
     * Upload and analyze videos of snatch and clean & jerk lifts.
-    * Uses computer vision (pose estimation) to extract key joint movements.
+    * Uses computer vision:
+      *  Pose estimation to extract key joint movements.
+      *  Object tracking to track barbell movement.
     * Generates textual descriptions of movement patterns.
 * **Multi-Agent System:**
     * **Technique Analyzer Agent:**
