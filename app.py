@@ -8,6 +8,7 @@ from agno.utils.pprint import pprint_run_response
 from dotenv import load_dotenv
 load_dotenv()
 
+
 st.title('Welcome to Weightlifting Analysis')
 st.write('This app will help you analyze your weightlifting form.')
 st.write('Please upload a video of your weightlifting form.')
@@ -29,7 +30,7 @@ if f is not None:
         for resp in response:
             if isinstance(resp, RunResponse) and isinstance(resp.content, str):
                 full_output += resp.content
-        with st.expander("Actionable Feedback", expanded=True):
+        with st.expander("Workout program", expanded=True):
             st.markdown(full_output)
 
 
