@@ -71,10 +71,11 @@ The Weightlifting Technique Analyst (WTA) is a multi-agent application designed 
 2.  The application will process the video and generate an analysis report.
 3.  View the analysis report, which includes feedback and recommendations.
 4.  Use the feedback to improve your technique.
+5.  Download PDF file of feedback and CSV file of the personalized program.
 
 ## Future Enhancements
 
-1. PDF generated report.
+1. Include bar path detection
 2. Train on any coaches available youtube videos and provide feedback based on it.
 3. Convert the project into a coaching platform.
 
